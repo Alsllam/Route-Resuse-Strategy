@@ -4,12 +4,12 @@ import { Component } from '@angular/core';
   templateUrl: './random-number.component.html',
 })
 export class RadmonNumberComponent {
-  randomNumber:number;
+  randomNumber:number = 1000;
   constructor() {}
 
   ngOnInit() {
     console.log('Component A Initialized');
-    this.refreshRandomNumber();
+    // this.refreshRandomNumber();
   }
   refreshRandomNumber(){
     this.randomNumber = Math.random() * 10000;

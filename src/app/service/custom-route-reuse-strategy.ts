@@ -7,30 +7,33 @@ import {
 export class CustomRouteReuseStrategy implements RouteReuseStrategy {
   private routeStore = new Map<string, DetachedRouteHandle>();
   shouldDetach(route: ActivatedRouteSnapshot): boolean {
-    const path = route.routeConfig.path;
+    const path = route.routeConfig?.path;
     return (
-      path && ['random-number-first', 'random-number-second'].includes(path)
+      (path != null || path !== undefined) && ['random-number-first', 'random-number-second'].includes(path)
     );
   }
-  store(route: ActivatedRouteSnapshot, handle: DetachedRouteHandle): void {
-    this.routeStore.set(route.routeConfig.path, handle);
+  store(route: ActivatedRouteSnapshot, handle: DetachedRouteHandle | null): void {
+    if(route.routeConfig?.path && handle){
+      this.routeStore.set(route.routeConfig.path, handle);
+    }
   }
   shouldAttach(route: ActivatedRouteSnapshot): boolean {
-    const path = route.routeConfig.path;
+    const path = route.routeConfig?.path;
     return (
-      path &&
+      (path != null || path !== undefined)  &&
       ['random-number-first', 'random-number-second'].includes(path) &&
       !!this.routeStore.get(path)
     );
   }
-  retrieve(route: ActivatedRouteSnapshot): DetachedRouteHandle {
-    const path = route.routeConfig.path;
-    return this.routeStore.get(path);
+  retrieve(route: ActivatedRouteSnapshot): DetachedRouteHandle | null {
+    const path = route.routeConfig?.path;
+    if(path && this.routeStore.has(path)){
+      return this.routeStore.get(path)!;
+    }
+    return null;
   }
-  shouldReuseRoute(
-    future: ActivatedRouteSnapshot,
-    curr: ActivatedRouteSnapshot
-  ): boolean {
+  shouldReuseRoute(future: ActivatedRouteSnapshot, curr: ActivatedRouteSnapshot): boolean {
     return future.routeConfig === curr.routeConfig;
   }
+ 
 }
